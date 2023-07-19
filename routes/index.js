@@ -81,18 +81,20 @@ router.post("/login", (req, res, next) => {
 
   User.find({ username })
     .then((result) => {
+
       if (result.length == 0) {
         res.render("login", {
           errorMessage: "El usuario no existe, por favor regístrate.",
         });
       }
+
       console.log("result[0].password = " + result[0].password)
       console.log("password = " + password)
       console.log("result = " + result)
-
       console.log("passwordEncriptada = " + passwordEncriptada)
-      // if (bcrypt.compareSync(password, result[0].username)) {
-      if (username == result[0].username) {
+
+      if (bcrypt.compareSync(password, result[0].password)) {
+        // if (username == result[0].username) {
 
         // let usuario = {
         //   username: result.username,
@@ -101,7 +103,7 @@ router.post("/login", (req, res, next) => {
 
         // req.session.currentUser = usuario;
 
-        res.redirect("/profile");
+        res.redirect("/profile", {});
       } else {
         res.render("login", {
           errorMessage: "Credenciales incorrectas.",
