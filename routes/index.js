@@ -93,8 +93,8 @@ router.post("/login", (req, res, next) => {
       console.log("result = " + result)
       console.log("passwordEncriptada = " + passwordEncriptada)
 
-      if (bcrypt.compareSync(password, result[0].password)) {
-        // if (username == result[0].username) {
+      // if (bcrypt.compareSync(password, result[0].password)) {
+      if (password == result[0].password) {
 
         // let usuario = {
         //   username: result.username,
@@ -103,7 +103,7 @@ router.post("/login", (req, res, next) => {
 
         // req.session.currentUser = usuario;
 
-        res.redirect("/profile", {});
+        res.render("profile", { username })
       } else {
         res.render("login", {
           errorMessage: "Credenciales incorrectas.",
@@ -127,7 +127,7 @@ router.get("/profile", (req, res, next) => {
 //     if (err) {
 //       next(err);
 //     } else {
-//       res.redirect("/user/login");
+//       res.redirect("/login");
 //     }
 //   });
 // });
