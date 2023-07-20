@@ -17,11 +17,11 @@ router.get("/", (req, res, next) => {
 
 
 // //registro
-router.get("/signup", (req, res, next) => {
+router.get("/signup", isLoggedOut, (req, res, next) => {
   res.render("signup");
 });
 
-router.post("/signup", (req, res, next) => {
+router.post("/signup", isLoggedOut, (req, res, next) => {
   let { username, password, passwordRepeat } = req.body;
 
   if (username == "" || password == "" || passwordRepeat == "") {
@@ -64,20 +64,17 @@ router.post("/signup", (req, res, next) => {
 });
 
 // // Login 
-router.get("/login", (req, res, next) => {
+router.get("/login", isLoggedOut, (req, res, next) => {
   res.render("login");
 });
 
-router.post("/login", (req, res, next) => {
+router.post("/login", isLoggedOut, (req, res, next) => {
   let { username, password } = req.body;
 
   if (username == "" || password == "") {
     res.render("login", { errorMessage: "Faltan campos por rellenar." });
   }
 
-
-  let salt = bcrypt.genSaltSync(saltRounds);
-  let passwordEncriptada = bcrypt.hashSync(password, salt);
 
   User.find({ username })
     .then((result) => {
@@ -88,22 +85,15 @@ router.post("/login", (req, res, next) => {
         });
       }
 
-      console.log("result[0].password = " + result[0].password)
-      console.log("password = " + password)
-      console.log("result = " + result)
-      console.log("passwordEncriptada = " + passwordEncriptada)
+      if (bcrypt.compareSync(password, result[0].password)) {
+        let usuario = {
+          username: result[0].username,
+          admin: result[0].admin,
+        };
 
-      // if (bcrypt.compareSync(password, result[0].password)) {
-      if (password == result[0].password) {
+        req.session.currentUser = usuario;
+        res.redirect("/profile");
 
-        // let usuario = {
-        //   username: result.username,
-        //   admin: result.admin,
-        // };
-
-        // req.session.currentUser = usuario;
-
-        res.render("profile", { username })
       } else {
         res.render("login", {
           errorMessage: "Credenciales incorrectas.",
@@ -114,33 +104,32 @@ router.post("/login", (req, res, next) => {
     .catch((err) => next(err));
 });
 
-// // Perfil
+// Perfil
+router.get("/profile", isLoggedIn, (req, res, next) => {
+  res.render("profile", { username: req.session.currentUser.username });
 
-router.get("/profile", (req, res, next) => {
-  // res.render("profile", { username: req.session.currentUser.username });
-  res.render("profile");
 });
 
-// // logout
-// router.get("/logout", isLoggedIn, (req, res, next) => {
-//   req.session.destroy((err) => {
-//     if (err) {
-//       next(err);
-//     } else {
-//       res.redirect("/login");
-//     }
-//   });
-// });
+// logout
+router.get("/logout", isLoggedIn, (req, res, next) => {
+  req.session.destroy((err) => {
+    if (err) {
+      next(err);
+    } else {
+      res.redirect("/login");
+    }
+  });
+});
 
-// // administrador
-// router.get("/admin", isLoggedIn, admin, (req, res, next) => {
-//   res.send("Eres administrador!");
-// });
+//  administrador
+router.get("/admin", isLoggedIn, admin, (req, res, next) => {
+  res.render("admin");
+});
 
-// // No administrador
-// router.get("/no-admin", isLoggedIn, (req, res, next) => {
-//   res.send("No eres administrador!");
-// });
+// No administrador
+router.get("/no-admin", isLoggedIn, (req, res, next) => {
+  res.render("no-admin");
+});
 
 
 

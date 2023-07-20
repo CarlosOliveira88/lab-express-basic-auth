@@ -3,6 +3,31 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-a {
-  color: #00B7FF;
+#profile-img {
+  width: 30%;
+  height: auto;
+  margin-left: 40%;
+  margin-top: 5%;
+  margin-bottom: 3%;
+}
+
+#cajaPerfil {
+  background-color: rgba(137, 43, 226, 0.364);
+  width: 300px;
+  height: 400px;
+  margin-left: 38%;
+  border: 3px solid black;
+}
+
+.cajaLogin {
+  background-color: rgba(137, 43, 226, 0.364);
+  width: 300px;
+  height: 400px;
+  margin-left: 38%;
+  border: 3px solid black;
+  padding: 10px;
+}
+
+.h1Text {
+  margin-left: 30%;
 }
